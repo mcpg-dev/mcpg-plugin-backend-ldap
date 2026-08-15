@@ -1,0 +1,45 @@
+[package]
+name = "mcpg-plugin-backend-ldap"
+version = "0.1.0-alpha.15"
+license = "BUSL-1.1"
+edition = "2024"
+description = """
+LDAP / Active Directory backend binding plugin for mcpg. Binds a service
+account and runs directory searches as MCP tools/resources — find people,
+groups, and org data, with the filter CEL-templated from tool arguments
+(LDAP-escaped against injection) and `cred://` resolution for the bind
+password. Pairs with the `ldap` identity plugin (bind-as-caller).
+"""
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+cdylib-export = []
+static-firstparty = []
+# Gates the docker-backed OpenLDAP integration suite so plain `cargo test`
+# stays cheap. Run: `cargo test -p mcpg-plugin-backend-ldap --features integration-tests`.
+integration-tests = []
+
+[dependencies]
+mcpg-plugin-protocol = { git = "https://github.com/mcpg-dev/mcpg-plugin-protocol", tag = "v0.1.0-beta.13", version = "=0.1.0-beta.13" }
+mcpg-plugin-sdk      = { git = "https://github.com/mcpg-dev/mcpg-plugin-sdk", tag = "v0.1.0-beta.13", version = "=0.1.0-beta.13", features = ["static-firstparty"] }
+mcpg-plugin-host     = { git = "https://github.com/mcpg-dev/mcpg-plugin-host", tag = "v0.1.0-beta.13", version = "=0.1.0-beta.13" }
+mcpg-expr            = { git = "https://github.com/mcpg-dev/mcpg-expr", tag = "v0.1.0-beta.13", version = "=0.1.0-beta.13" }
+async-trait    = "0.1"
+chrono         = { version = "0.4", features = ["clock"] }
+# Async LDAP client. rustls with the aws-lc-rs provider (NOT native-tls —
+# deny.toml bans openssl/native-tls), matching the workspace TLS backend.
+ldap3          = { version = "0.12", default-features = false, features = ["tls-rustls-aws-lc-rs"] }
+serde          = { version = "1", features = ["derive"] }
+serde_json     = "1"
+tokio          = { version = "1", features = ["sync", "rt", "rt-multi-thread", "macros", "time"] }
+tracing        = "0.1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread", "net", "io-util", "time"] }
+async-trait = "0.1"
+# Docker-backed OpenLDAP integration test (async runner). Dev-dep only.
+testcontainers = "0.27"
+

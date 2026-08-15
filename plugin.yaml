@@ -1,0 +1,15 @@
+schema: mcpg.dev/plugin/v1
+id: dev.mcpg.backend.ldap
+name: LDAP Binding
+license: BUSL-1.1
+description: |
+  Runs LDAP / Active Directory searches as MCP tools and resources. Binds
+  a configured service account, then issues a search whose filter is
+  CEL-templated from the tool arguments (argument values are LDAP-escaped
+  to prevent filter injection) and returns the matching entries as JSON.
+  The bind password resolves through the gateway credential cache via
+  `cred://`. Connects over LDAP or LDAPS (rustls).
+class: backend
+runtime: native-cdylib-v1
+protocol_version: "1.0"
+required_capabilities: [network_outbound]
