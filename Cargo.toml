@@ -1,6 +1,6 @@
 [package]
 name = "mcpg-plugin-backend-ldap"
-version = "0.1.0-alpha.33"
+version = "0.1.0-alpha.39"
 license = "BUSL-1.1"
 edition = "2024"
 description = """
@@ -23,10 +23,10 @@ static-firstparty = []
 integration-tests = []
 
 [dependencies]
-mcpg-plugin-protocol = { git = "https://github.com/mcpg-dev/mcpg-plugin-protocol", tag = "v0.1.0-beta.29", version = "=0.1.0-beta.29" }
-mcpg-plugin-sdk      = { git = "https://github.com/mcpg-dev/mcpg-plugin-sdk", tag = "v0.1.0-beta.30", version = "=0.1.0-beta.30", features = ["static-firstparty"] }
-mcpg-plugin-host     = { git = "https://github.com/mcpg-dev/mcpg-plugin-host", tag = "v0.1.0-beta.31", version = "=0.1.0-beta.31" }
-mcpg-expr            = { git = "https://github.com/mcpg-dev/mcpg-expr", tag = "v0.1.0-beta.29", version = "=0.1.0-beta.29" }
+mcpg-plugin-protocol = { git = "https://github.com/mcpg-dev/mcpg-plugin-protocol", tag = "v0.1.0-beta.35", version = "=0.1.0-beta.35" }
+mcpg-plugin-sdk      = { git = "https://github.com/mcpg-dev/mcpg-plugin-sdk", tag = "v0.1.0-beta.36", version = "=0.1.0-beta.36", features = ["static-firstparty"] }
+mcpg-plugin-host     = { git = "https://github.com/mcpg-dev/mcpg-plugin-host", tag = "v0.1.0-beta.37", version = "=0.1.0-beta.37" }
+mcpg-expr            = { git = "https://github.com/mcpg-dev/mcpg-expr", tag = "v0.1.0-beta.35", version = "=0.1.0-beta.35" }
 async-trait    = "0.1"
 chrono         = { version = "0.4", features = ["clock"] }
 # Async LDAP client. rustls with the aws-lc-rs provider (NOT native-tls —
