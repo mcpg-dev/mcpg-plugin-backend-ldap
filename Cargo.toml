@@ -1,6 +1,6 @@
 [package]
 name = "mcpg-plugin-backend-ldap"
-version = "0.1.0-alpha.43"
+version = "0.1.0-alpha.44"
 license = "BUSL-1.1"
 edition = "2024"
 description = """
@@ -23,15 +23,19 @@ static-firstparty = []
 integration-tests = []
 
 [dependencies]
-mcpg-plugin-protocol = { git = "https://github.com/mcpg-dev/mcpg-plugin-protocol", tag = "v0.1.0-beta.39", version = "=0.1.0-beta.39" }
-mcpg-plugin-sdk      = { git = "https://github.com/mcpg-dev/mcpg-plugin-sdk", tag = "v0.1.0-beta.40", version = "=0.1.0-beta.40", features = ["static-firstparty"] }
-mcpg-plugin-host     = { git = "https://github.com/mcpg-dev/mcpg-plugin-host", tag = "v0.1.0-beta.41", version = "=0.1.0-beta.41" }
-mcpg-expr            = { git = "https://github.com/mcpg-dev/mcpg-expr", tag = "v0.1.0-beta.39", version = "=0.1.0-beta.39" }
+mcpg-plugin-protocol = { git = "https://github.com/mcpg-dev/mcpg-plugin-protocol", tag = "v0.1.0-beta.40", version = "=0.1.0-beta.40" }
+mcpg-plugin-sdk      = { git = "https://github.com/mcpg-dev/mcpg-plugin-sdk", tag = "v0.1.0-beta.41", version = "=0.1.0-beta.41", features = ["static-firstparty"] }
+mcpg-plugin-host     = { git = "https://github.com/mcpg-dev/mcpg-plugin-host", tag = "v0.1.0-beta.42", version = "=0.1.0-beta.42" }
+mcpg-expr            = { git = "https://github.com/mcpg-dev/mcpg-expr", tag = "v0.1.0-beta.40", version = "=0.1.0-beta.40" }
 async-trait    = "0.1"
 chrono         = { version = "0.4", features = ["clock"] }
 # Async LDAP client. rustls with the aws-lc-rs provider (NOT native-tls —
 # deny.toml bans openssl/native-tls), matching the workspace TLS backend.
 ldap3          = { version = "0.12", default-features = false, features = ["tls-rustls-aws-lc-rs"] }
+# The crypto provider the plugin installs: a build that links both rustls
+# providers has none by default, and ldap3 builds its TLS configuration
+# from the default.
+rustls         = { version = "0.23", default-features = false, features = ["ring", "std"] }
 serde          = { version = "1", features = ["derive"] }
 serde_json     = "1"
 tokio          = { version = "1", features = ["sync", "rt", "rt-multi-thread", "macros", "time"] }

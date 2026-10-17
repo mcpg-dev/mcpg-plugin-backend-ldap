@@ -16,6 +16,16 @@ use mcpg_plugin_sdk::{HostHandle, HostHandleBackendHost};
 
 use crate::LdapBackendPlugin;
 
+/// Install the crypto provider rustls builds TLS configurations from: a
+/// build that links both rustls providers has no default, and this
+/// cdylib's copy of rustls does not see the host's.
+fn install_crypto_provider() {
+    static INSTALL: std::sync::Once = std::sync::Once::new();
+    INSTALL.call_once(|| {
+        let _ = rustls::crypto::ring::default_provider().install_default();
+    });
+}
+
 fn build_bridge_runtime(thread_name: &str) -> tokio::runtime::Runtime {
     tokio::runtime::Builder::new_multi_thread()
         .worker_threads(2)
@@ -37,6 +47,7 @@ impl LdapBackendCdylib {
     /// plugin-level config (per-binding url / bind / search arrive via
     /// `register_profile`).
     pub fn from_host_config(_config_json: &str, host: HostHandle) -> Self {
+        install_crypto_provider();
         let inner = LdapBackendPlugin::new();
         let _installed = inner.set_host_handle(host.clone());
         Self {
@@ -105,4 +116,18 @@ mcpg_plugin_sdk::declare_plugin! {
                 LdapBackendCdylib::from_host_config(cfg, host),
         },
     ],
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_tls_configuration_can_be_built_once_the_plugin_is_made() {
+        // SAFETY: `stub_host_ref` returns a process-static no-op host ref.
+        #[allow(unsafe_code)]
+        let host = unsafe { HostHandle::from_ffi(mcpg_plugin_sdk::testing::stub_host_ref()) };
+        let _plugin = LdapBackendCdylib::from_host_config("", host);
+        let _ = rustls::ClientConfig::builder();
+    }
 }
