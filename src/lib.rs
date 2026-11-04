@@ -72,6 +72,8 @@ fn synthetic_system_identity() -> PluginIdentity {
 fn build_expr_context(arguments: &Value, tool_name: &str, request: &BackendRequest) -> ExprContext {
     let mut ctx = ExprRequestContext {
         session_id: request.session_id.clone(),
+        client_name: request.client.as_ref().map(|c| c.name.clone()),
+        client_version: request.client.as_ref().and_then(|c| c.version.clone()),
         ..ExprRequestContext::default()
     };
     if let Some(identity) = request.identity.as_ref() {
@@ -669,6 +671,7 @@ mod tests {
             session_id: None,
             identity: None,
             idempotency: None,
+            client: None,
         };
         let err = plugin.execute("missing", req).await.expect_err("missing");
         assert!(matches!(err, BackendError::ProfileNotFound { .. }));
